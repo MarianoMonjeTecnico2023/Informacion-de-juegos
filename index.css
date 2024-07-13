@@ -1,0 +1,123 @@
+/* Tipografía y colores */
+body {
+  font-family: 'Roboto', sans-serif; /* Fuente moderna y legible */
+  line-height: 1.6; /* Mejorar la legibilidad */
+  background-color: #f4f4f4; /* Fondo gris claro */
+  color: #333; /* Texto gris oscuro */
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-weight: 400; /* Grosor de fuente normal */
+  color: #222; /* Texto más oscuro para los títulos */
+}
+
+/* Menú de navegación */
+nav {
+  background-color: #333; /* Fondo oscuro para el menú */
+  color: #fff; /* Texto blanco para el menú */
+  padding: 10px 0; /* Espacio interior */
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+nav ul li {
+  display: inline;
+  margin: 0 15px; /* Espacio entre elementos del menú */
+}
+
+nav a {
+  color: #fff; /* Enlaces blancos */
+  text-decoration: none; /* Sin subrayado */
+  font-weight: 500; /* Enlaces ligeramente más gruesos */
+  transition: color 0.3s ease; /* Transición suave al pasar el mouse */
+}
+
+nav a:hover {
+  color: #ff9900; /* Color naranja al pasar el mouse */
+}
+
+/* Secciones de juegos */
+section {
+  margin-bottom: 40px;
+}
+
+section h2, section h3 {
+  margin-top: 20px; /* Espacio superior para los títulos */
+}
+
+.lista-juegos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Diseño responsivo con grid */
+  gap: 20px; /* Espacio entre tarjetas */
+}
+
+/* Tarjeta de juego */
+.juego {
+  background-color: #fff; /* Fondo blanco para las tarjetas */
+  border-radius: 10px; /* Bordes redondeados */
+  overflow: hidden; /* Ocultar el contenido que se desborde */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves */
+}
+
+.juego:hover {
+  transform: translateY(-5px); /* Elevar ligeramente al pasar el mouse */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra más intensa al pasar el mouse */
+}
+
+.juego img {
+  width: 100%;
+  height: 200px; /* Altura de la imagen */
+  object-fit: cover; /* Cubrir el contenedor manteniendo la relación de aspecto */
+}
+
+.info-juego {
+  padding: 20px;
+}
+
+.juego h3 {
+  margin-bottom: 5px;
+}
+
+.juego p {
+  margin: 8px 0; /* Espacio entre párrafos */
+}
+
+.leer-mas, .ver-mas {
+  color: #007bff; /* Azul para los enlaces */
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.leer-mas:hover, .ver-mas:hover {
+  color: #0056b3; /* Azul más oscuro al pasar el mouse */
+}
+
+/* Paginación */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination button,
+.pagination span {
+  margin: 0 5px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
