@@ -13,59 +13,66 @@ import {
 import { translateHtml, translateText } from './translations.js';
 import { translateSynopsis } from './gameTranslations.js';
 
+// Función para mostrar errores en la UI
+function showError(message) {
+    const errorContainer = document.getElementById('error-container');
+    if (errorContainer) {
+        errorContainer.textContent = message;
+    }
+    console.error(message);
+}
+
 async function createGameElement(game) {
-    console.log('Creando elemento para el juego:', game.name);
-    
-    // Verificar si el juego ya fue mostrado en una plataforma con mayor prioridad
-    if (juegosMostrados.has(game.id)) {
-        console.log('Juego ya mostrado:', game.name);
-        return null;
-    }
-
-    // Verificar si el juego está disponible en PC
-    const isPC = game.platforms && game.platforms.some(platform => 
-        groupedPlatforms['PC'].some(p => p.name === platform.platform.name)
-    );
-    
-    if (!isPC) {
-        console.log('Juego no disponible en PC:', game.name);
-        return null;
-    }
-
-    console.log('Creando elemento HTML para:', game.name);
-    const gameDiv = document.createElement('div');
-    gameDiv.classList.add('juego');
-    gameDiv.dataset.gameId = game.id;
-
-    // Crear imagen del juego
-    const image = document.createElement('img');
-    image.src = game.background_image || 'imagen_por_defecto.jpg';
-    image.alt = game.name;
-    gameDiv.appendChild(image);
-
-    // Crear contenedor de información
-    const infoDiv = document.createElement('div');
-    infoDiv.classList.add('info-juego');
-    gameDiv.appendChild(infoDiv);
-
-    // Título del juego
-    const title = document.createElement('h3');
-    title.textContent = game.name;
-    infoDiv.appendChild(title);
-
-    // Géneros del juego
-    if (game.genres && game.genres.length > 0) {
-        const translatedGenres = game.genres.map(g => genresES[g.slug] || g.name);
-        const genreElement = document.createElement('p');
-        genreElement.textContent = `Géneros: ${translatedGenres.join(', ')}`;
-        infoDiv.appendChild(genreElement);
-    }
-
     try {
+        console.log('Creando elemento para el juego:', game.name);
+        
+        // Verificar si el juego ya fue mostrado
+        if (juegosMostrados.has(game.id)) {
+            console.log('Juego ya mostrado:', game.name);
+            return null;
+        }
+
+        // Verificar si el juego está disponible en PC
+        const isPC = game.platforms && game.platforms.some(platform => 
+            groupedPlatforms['PC'].some(p => p.name === platform.platform.name)
+        );
+        
+        if (!isPC) {
+            console.log('Juego no disponible en PC:', game.name);
+            return null;
+        }
+
+        const gameDiv = document.createElement('div');
+        gameDiv.classList.add('juego');
+        gameDiv.dataset.gameId = game.id;
+
+        // Crear imagen del juego
+        const image = document.createElement('img');
+        image.src = game.background_image || 'imagen_por_defecto.jpg';
+        image.alt = game.name;
+        gameDiv.appendChild(image);
+
+        // Crear contenedor de información
+        const infoDiv = document.createElement('div');
+        infoDiv.classList.add('info-juego');
+        gameDiv.appendChild(infoDiv);
+
+        // Título del juego
+        const title = document.createElement('h3');
+        title.textContent = game.name;
+        infoDiv.appendChild(title);
+
+        // Géneros del juego
+        if (game.genres && game.genres.length > 0) {
+            const translatedGenres = game.genres.map(g => genresES[g.slug] || g.name);
+            const genreElement = document.createElement('p');
+            genreElement.textContent = `Géneros: ${translatedGenres.join(', ')}`;
+            infoDiv.appendChild(genreElement);
+        }
+
         // Obtener y mostrar detalles del juego
         const gameDetails = await getGameDetails(game.id);
         if (gameDetails && gameDetails.description) {
-            // Descripción traducida usando el diccionario local
             const descripcionOriginal = translateSynopsis(gameDetails.description);
             const descripcionSinHtml = descripcionOriginal.replace(/<[^>]+>/g, '');
             const palabrasDescripcion = descripcionSinHtml.split(/\s+/);
@@ -77,7 +84,6 @@ async function createGameElement(game) {
             description.textContent = descripcionCorta + (palabrasDescripcion.length > maxPalabras ? '...' : '');
             infoDiv.appendChild(description);
 
-            // Botón "Leer más"
             if (palabrasDescripcion.length > maxPalabras) {
                 const leerMasLink = document.createElement('a');
                 leerMasLink.href = '#';
@@ -101,91 +107,108 @@ async function createGameElement(game) {
                 infoDiv.appendChild(platformElement);
             }
         }
+
+        // Marcar el juego como mostrado
+        juegosMostrados.add(game.id);
+        window.lastShownPlatform[game.id] = 'PC';
+        console.log('Juego agregado exitosamente:', game.name);
+
+        return gameDiv;
     } catch (error) {
-        console.error('Error al obtener detalles del juego:', error);
+        showError(`Error al crear elemento del juego ${game.name}: ${error.message}`);
+        return null;
     }
-
-    // Marcar el juego como mostrado
-    juegosMostrados.add(game.id);
-    window.lastShownPlatform[game.id] = 'PC';
-    console.log('Juego agregado exitosamente:', game.name);
-
-    return gameDiv;
 }
 
 async function loadGames(genreId, page = 1) {
-    console.log('Cargando juegos para género:', genreId, 'página:', page);
-    const platformIds = groupedPlatforms['PC'].map(p => p.id);
-    console.log('IDs de plataforma:', platformIds);
-    
     try {
+        console.log('Cargando juegos para género:', genreId, 'página:', page);
+        const platformIds = groupedPlatforms['PC'].map(p => p.id);
+        console.log('IDs de plataforma:', platformIds);
+        
         const data = await getGames(platformIds, genreId, page);
         console.log('Datos de juegos recibidos:', data);
         
+        if (!data || !data.results) {
+            throw new Error('No se recibieron datos válidos de la API');
+        }
+
         const genres = await getGenres();
+        if (!genres || !Array.isArray(genres)) {
+            throw new Error('No se pudieron obtener los géneros');
+        }
+
         const genre = genres.find(g => g.id === genreId);
         if (!genre) {
-            console.error(`No se encontró el género con ID ${genreId}`);
-            return;
+            throw new Error(`No se encontró el género con ID ${genreId}`);
         }
         
         const categorySectionId = `pc-${genre.slug}`;
-        console.log('ID de sección:', categorySectionId);
-        
         const gameList = document.getElementById(categorySectionId)?.querySelector('.lista-juegos');
         if (!gameList) {
-            console.error(`No se encontró la lista de juegos para la categoría ${categorySectionId}`);
-            return;
+            throw new Error(`No se encontró la lista de juegos para la categoría ${categorySectionId}`);
         }
 
-        console.log('Agregando juegos a la lista...');
         for (const game of data.results) {
             const gameElement = await createGameElement(game);
             if (gameElement) {
                 gameList.appendChild(gameElement);
-                console.log('Juego agregado:', game.name);
             }
         }
 
         updatePagination(categorySectionId, genreId, page, data.next);
+        
+        // Ocultar mensaje de carga
+        const loadingElement = document.getElementById('loading');
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
     } catch (error) {
-        console.error('Error al cargar juegos:', error);
+        showError(`Error al cargar juegos: ${error.message}`);
     }
 }
 
 function updatePagination(categorySectionId, genreId, currentPage, nextPageUrl) {
-    const paginationContainer = document.getElementById(`${categorySectionId}-pagination`);
-    if (!paginationContainer) return;
-    
-    paginationContainer.innerHTML = '';
+    try {
+        const paginationContainer = document.getElementById(`${categorySectionId}-pagination`);
+        if (!paginationContainer) return;
+        
+        paginationContainer.innerHTML = '';
 
-    const prevButton = document.createElement('button');
-    prevButton.textContent = 'Anterior';
-    prevButton.disabled = currentPage === 1;
-    prevButton.addEventListener('click', () => loadGames(genreId, currentPage - 1));
-    paginationContainer.appendChild(prevButton);
+        const prevButton = document.createElement('button');
+        prevButton.textContent = 'Anterior';
+        prevButton.disabled = currentPage === 1;
+        prevButton.addEventListener('click', () => loadGames(genreId, currentPage - 1));
+        paginationContainer.appendChild(prevButton);
 
-    const pageSpan = document.createElement('span');
-    pageSpan.textContent = `Página ${currentPage}`;
-    paginationContainer.appendChild(pageSpan);
+        const pageSpan = document.createElement('span');
+        pageSpan.textContent = `Página ${currentPage}`;
+        paginationContainer.appendChild(pageSpan);
 
-    const nextButton = document.createElement('button');
-    nextButton.textContent = 'Cargar más juegos';
-    nextButton.disabled = !nextPageUrl;
-    nextButton.addEventListener('click', () => loadGames(genreId, currentPage + 1));
-    paginationContainer.appendChild(nextButton);
+        const nextButton = document.createElement('button');
+        nextButton.textContent = 'Cargar más juegos';
+        nextButton.disabled = !nextPageUrl;
+        nextButton.addEventListener('click', () => loadGames(genreId, currentPage + 1));
+        paginationContainer.appendChild(nextButton);
+    } catch (error) {
+        showError(`Error al actualizar la paginación: ${error.message}`);
+    }
 }
 
 async function main() {
-    console.log('Iniciando carga de juegos de PC...');
     try {
+        console.log('Iniciando carga de juegos de PC...');
         const genres = await getGenres();
+        
+        if (!genres || !Array.isArray(genres)) {
+            throw new Error('No se pudieron obtener los géneros de juegos');
+        }
+
         console.log('Géneros obtenidos:', genres);
         
         const contenidoJuegos = document.getElementById('contenido-juegos');
         if (!contenidoJuegos) {
-            console.error('No se encontró el elemento contenido-juegos');
-            return;
+            throw new Error('No se encontró el elemento contenido-juegos');
         }
 
         for (const genre of genres) {
@@ -213,7 +236,7 @@ async function main() {
             await loadGames(genre.id);
         }
     } catch (error) {
-        console.error('Error en la función main:', error);
+        showError(`Error al inicializar la página: ${error.message}`);
     }
 }
 

@@ -23,7 +23,7 @@ exports.handler = async function(event, context) {
         const { platformIds, genreId, page = 1 } = JSON.parse(event.body);
         const pageSize = 10;
 
-        let url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=${pageSize}&page=${page}`;
+        let url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=${pageSize}&page=${page}&ordering=-rating`;
         
         if (platformIds && platformIds.length > 0) {
             url += `&platforms=${platformIds.join(',')}`;
