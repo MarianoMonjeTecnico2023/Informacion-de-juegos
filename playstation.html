@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="/index.css">
     <title>Juegos de PlayStation</title>
 </head>
 <body>
     <h1>Información sobre Juegos de PlayStation</h1>
-    <a href="index.html"><h2>Regresar al inicio</h2></a>
+    <a href="/index.html">Regresar al inicio</a>
+    
+    <div id="error-container" style="color: red; margin: 20px;"></div>
+    
     <main id="contenido-juegos">
+        <div id="loading">Cargando juegos...</div>
     </main>
-   
-    <script type="module" src="api.js" defer></script>
-    <script type="module" src="translations.js" defer></script>
-    <script type="module" src="play.js" defer></script>
+
+    <script type="module" src="/translations.js"></script>
+    <script type="module" src="/gameTranslations.js"></script>
+    <script type="module" src="/api.js"></script>
+    <script type="module" src="/play.js"></script>
 </body>
 </html>
