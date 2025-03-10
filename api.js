@@ -1,3 +1,4 @@
+// Configuración de la API
 const baseUrl = 'https://api.rawg.io/api/games';
 const pageSize = 10;
 
@@ -84,7 +85,7 @@ const genresES = {
 const juegosMostrados = new Set();
 
 // Inicializar window.lastShownPlatform si no existe
-if (!window.lastShownPlatform) {
+if (typeof window !== 'undefined' && !window.lastShownPlatform) {
     window.lastShownPlatform = {};
 }
 
@@ -96,7 +97,6 @@ function getMainPlatform(game, currentPlatform) {
         return null;
     }
 
-    // Si el juego ya fue mostrado en una plataforma con mayor prioridad, no mostrarlo
     if (juegosMostrados.has(game.id)) {
         const shownPlatform = window.lastShownPlatform[game.id];
         if (platformPriority[shownPlatform] < platformPriority[currentPlatform]) {
@@ -105,7 +105,6 @@ function getMainPlatform(game, currentPlatform) {
         }
     }
 
-    // Verificar si el juego está disponible en la plataforma actual
     const isAvailable = game.platforms.some(platform => 
         groupedPlatforms[currentPlatform].some(p => p.name === platform.platform.name)
     );
@@ -121,6 +120,7 @@ function getMainPlatform(game, currentPlatform) {
 
 async function getGameDetails(gameId) {
     try {
+        console.log('Obteniendo detalles para el juego:', gameId);
         const response = await fetch('/.netlify/functions/getGameDetails', {
             method: 'POST',
             headers: {
@@ -134,6 +134,7 @@ async function getGameDetails(gameId) {
         }
         
         const data = await response.json();
+        console.log('Detalles recibidos:', data);
         return data;
     } catch (error) {
         console.error(`Error al obtener detalles del juego ${gameId}:`, error);
@@ -143,6 +144,7 @@ async function getGameDetails(gameId) {
 
 async function getGames(platformIds, genreId, page = 1) {
     try {
+        console.log('Solicitando juegos:', { platformIds, genreId, page });
         const response = await fetch('/.netlify/functions/getGames', {
             method: 'POST',
             headers: {
@@ -156,10 +158,10 @@ async function getGames(platformIds, genreId, page = 1) {
         }
         
         const data = await response.json();
-        console.log('Datos recibidos:', data);
+        console.log('Datos de juegos recibidos:', data);
         return data;
     } catch (error) {
-        console.error(`Error al obtener juegos:`, error);
+        console.error('Error al obtener juegos:', error);
         return { results: [] };
     }
 }
@@ -179,8 +181,8 @@ async function getGenres() {
         }
         
         const data = await response.json();
-        console.log('Géneros recibidos:', data.results);
-        return data.results;
+        console.log('Géneros recibidos:', data);
+        return data.results || [];
     } catch (error) {
         console.error('Error al obtener los géneros:', error);
         return [];
@@ -189,6 +191,7 @@ async function getGenres() {
 
 async function getPlataformas() {
     try {
+        console.log('Obteniendo plataformas...');
         const response = await fetch('/.netlify/functions/getPlataformas', {
             method: 'POST',
             headers: {
@@ -201,13 +204,15 @@ async function getPlataformas() {
         }
         
         const data = await response.json();
-        return data.results;
+        console.log('Plataformas recibidas:', data);
+        return data.results || [];
     } catch (error) {
         console.error('Error al obtener las plataformas:', error);
         return [];
     }
 }
 
+// Exportar todo lo necesario
 export {
     baseUrl,
     pageSize,
