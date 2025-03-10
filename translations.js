@@ -660,16 +660,19 @@ function translateHtml(html, genre = null) {
 }
 
 // Función para traducir texto HTML
-export function translateHtml(text) {
+function translateHtml(text) {
     if (!text) return '';
     return text.replace(/\b\w+\b/g, word => commonTranslations[word] || word);
 }
 
 // Función para traducir texto normal
-export function translateText(text) {
+function translateText(text) {
     if (!text) return '';
     return text.replace(/\b\w+\b/g, word => commonTranslations[word] || word);
 }
+
+// Exportar las funciones
+export { translateText, translateHtml };
 
 // Asegurarse de que las funciones están disponibles globalmente
 window.translateHtml = translateHtml;
