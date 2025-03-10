@@ -598,6 +598,8 @@ const translationCache = new Map();
 
 // Función para traducir texto con contexto de género
 function translateText(text, genre = null) {
+    if (!text) return '';
+    
     // Si el texto ya está en caché, devolverlo
     if (translationCache.has(text)) {
         return translationCache.get(text);
@@ -637,6 +639,8 @@ function translateText(text, genre = null) {
 
 // Función para traducir HTML con contexto de género
 function translateHtml(html, genre = null) {
+    if (!html) return '';
+    
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     
@@ -657,18 +661,6 @@ function translateHtml(html, genre = null) {
 
     translateNode(doc.body);
     return doc.body.innerHTML;
-}
-
-// Función para traducir texto HTML
-function translateHtml(text) {
-    if (!text) return '';
-    return text.replace(/\b\w+\b/g, word => commonTranslations[word] || word);
-}
-
-// Función para traducir texto normal
-function translateText(text) {
-    if (!text) return '';
-    return text.replace(/\b\w+\b/g, word => commonTranslations[word] || word);
 }
 
 // Exportar las funciones

@@ -1,12 +1,33 @@
 const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
-    const API_KEY = process.env.RAWG_API_KEY;
-    
+    // Manejar solicitudes OPTIONS para CORS
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS'
+            },
+            body: ''
+        };
+    }
+
     try {
-        const response = await fetch(
-            `https://api.rawg.io/api/platforms?key=${API_KEY}`
-        );
+        const API_KEY = process.env.RAWG_API_KEY;
+        if (!API_KEY) {
+            throw new Error('API_KEY no está configurada');
+        }
+
+        const url = `https://api.rawg.io/api/platforms?key=${API_KEY}`;
+        console.log('URL de la solicitud:', url);
+
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`Error en la API: ${response.status}`);
+        }
         
         const data = await response.json();
         
@@ -14,14 +35,24 @@ exports.handler = async function(event, context) {
             statusCode: 200,
             headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS'
             },
             body: JSON.stringify(data)
         };
     } catch (error) {
+        console.error('Error en getPlataformas:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Error al obtener las plataformas' })
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({ 
+                error: 'Error al obtener las plataformas',
+                details: error.message
+            })
         };
     }
 }; 
