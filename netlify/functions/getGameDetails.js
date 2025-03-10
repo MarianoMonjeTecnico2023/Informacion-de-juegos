@@ -1,21 +1,26 @@
 const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
+    // Manejar solicitudes OPTIONS para CORS
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS'
+            },
+            body: ''
+        };
+    }
+
     try {
         const API_KEY = process.env.RAWG_API_KEY;
         if (!API_KEY) {
             throw new Error('API_KEY no está configurada');
         }
 
-        if (!event.body) {
-            throw new Error('No se recibieron parámetros');
-        }
-
         const { gameId } = JSON.parse(event.body);
-        if (!gameId) {
-            throw new Error('gameId es requerido');
-        }
-
         const url = `https://api.rawg.io/api/games/${gameId}?key=${API_KEY}`;
         console.log('URL de la solicitud:', url);
 

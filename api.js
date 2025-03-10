@@ -121,8 +121,11 @@ function getMainPlatform(game, currentPlatform) {
 
 async function getGameDetails(gameId) {
     try {
-        const response = await fetch('/api/getGameDetails', {
+        const response = await fetch('/.netlify/functions/getGameDetails', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ gameId })
         });
         
@@ -140,8 +143,11 @@ async function getGameDetails(gameId) {
 
 async function getGames(platformIds, genreId, page = 1) {
     try {
-        const response = await fetch('/api/getGames', {
+        const response = await fetch('/.netlify/functions/getGames', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({ platformIds, genreId, page })
         });
         
@@ -161,8 +167,11 @@ async function getGames(platformIds, genreId, page = 1) {
 async function getGenres() {
     try {
         console.log('Obteniendo géneros...');
-        const response = await fetch('/api/getGenres', {
-            method: 'POST'
+        const response = await fetch('/.netlify/functions/getGenres', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
         
         if (!response.ok) {
@@ -180,8 +189,11 @@ async function getGenres() {
 
 async function getPlataformas() {
     try {
-        const response = await fetch('/api/getPlataformas', {
-            method: 'POST'
+        const response = await fetch('/.netlify/functions/getPlataformas', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
         
         if (!response.ok) {
