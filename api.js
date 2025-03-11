@@ -121,7 +121,7 @@ function getMainPlatform(game, currentPlatform) {
 async function getGameDetails(gameId) {
     try {
         console.log('Obteniendo detalles para el juego:', gameId);
-        const response = await fetch('/.netlify/functions/getGameDetails', {
+        const response = await fetch('/api/getGameDetails', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -145,7 +145,7 @@ async function getGameDetails(gameId) {
 async function getGenres() {
     try {
         console.log('Iniciando llamada a getGenres...');
-        const response = await fetch('/.netlify/functions/getGenres', {
+        const response = await fetch('/api/getGenres', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -172,7 +172,7 @@ async function getGenres() {
 async function getGames(platformIds, genreId, page = 1) {
     try {
         console.log('Iniciando llamada a getGames con:', { platformIds, genreId, page });
-        const response = await fetch('/.netlify/functions/getGames', {
+        const response = await fetch('/api/getGames', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -200,7 +200,7 @@ async function getGames(platformIds, genreId, page = 1) {
 async function getPlataformas() {
     try {
         console.log('Obteniendo plataformas...');
-        const response = await fetch('/.netlify/functions/getPlataformas', {
+        const response = await fetch('/api/getPlataformas', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

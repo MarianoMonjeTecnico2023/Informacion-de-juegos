@@ -1,8 +1,2 @@
-# Redirige las rutas de la API a las funciones de Netlify
-/.netlify/functions/getGenres     /.netlify/functions/getGenres     200
-/.netlify/functions/getGames      /.netlify/functions/getGames      200
-/.netlify/functions/getGameDetails /.netlify/functions/getGameDetails 200
-/.netlify/functions/getPlataformas /.netlify/functions/getPlataformas 200
-
 # Redirige todas las rutas no encontradas al index.html para el enrutamiento del lado del cliente
 /*    /index.html   200 

@@ -6,6 +6,8 @@
   for = "/*"
     [headers.values]
     Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
 
 [[headers]]
   for = "/*.js"
@@ -20,7 +22,7 @@
     Cache-Control = "public, max-age=3600"
 
 [[redirects]]
-  from = "/.netlify/functions/*"
+  from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
   force = true
@@ -28,4 +30,5 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200 
+  status = 200
+  conditions = {Response.missing = true} 
