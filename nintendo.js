@@ -68,8 +68,9 @@ async function createGameElement(game) {
         // Determinar el género principal para la traducción
         const mainGenre = gameDetails.genres[0]?.slug || 'Action';
         
-        // Descripción traducida usando el diccionario local
-        const descripcionOriginal = translateSynopsis(gameDetails.description) || 'No hay descripción disponible.';
+        // Descripción traducida con contexto de género
+        const translatedDescriptionHtml = await translateHtml(gameDetails.description, mainGenre);
+        const descripcionOriginal = translatedDescriptionHtml || 'No hay descripción disponible.';
         const descripcionSinHtml = descripcionOriginal.replace(/<[^>]+>/g, '');
         const palabrasDescripcion = descripcionSinHtml.split(/\s+/);
 
