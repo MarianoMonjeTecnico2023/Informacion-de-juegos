@@ -16,10 +16,22 @@
     Cache-Control = "public, max-age=3600"
 
 [[headers]]
+  for = "/*.mjs"
+    [headers.values]
+    Content-Type = "application/javascript"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
   for = "/*.css"
     [headers.values]
     Content-Type = "text/css"
     Cache-Control = "public, max-age=3600"
+
+# Asegurarse de que los módulos ES6 funcionen correctamente
+[[redirects]]
+  from = "/translations/*"
+  to = "/translations/:splat"
+  status = 200
 
 [[redirects]]
   from = "/api/*"

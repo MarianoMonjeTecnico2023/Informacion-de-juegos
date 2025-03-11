@@ -9,7 +9,7 @@ import {
     getMainPlatform,
     groupedPlatforms
 } from './api.js';
-import { translateHtml, translateText } from './translations.js';
+import { translateSynopsis } from './translations/index.js';
 
 async function createGameElement(game) {
     console.log('Creando elemento para el juego:', game.name);
@@ -63,13 +63,9 @@ async function createGameElement(game) {
     // Obtener y mostrar detalles del juego
     const gameDetails = await getGameDetails(game.id);
     if (gameDetails) {
-        // Determinar el género principal para la traducción
-        const mainGenre = gameDetails.genres[0]?.slug || 'Action';
-        
-        // Descripción traducida con contexto de género
-        const translatedDescriptionHtml = await translateHtml(gameDetails.description, mainGenre);
-        const descripcionOriginal = translatedDescriptionHtml || 'No hay descripción disponible.';
-        const descripcionSinHtml = descripcionOriginal.replace(/<[^>]+>/g, '');
+        // Traducir la descripción usando el nuevo sistema
+        const translatedDescription = await translateSynopsis(gameDetails.description);
+        const descripcionSinHtml = translatedDescription.replace(/<[^>]+>/g, '');
         const palabrasDescripcion = descripcionSinHtml.split(/\s+/);
 
         const maxPalabras = 50;
@@ -88,7 +84,7 @@ async function createGameElement(game) {
 
             leerMasLink.addEventListener('click', (event) => {
                 event.preventDefault();
-                descripcionMostrada = descripcionOriginal;
+                descripcionMostrada = translatedDescription;
                 description.innerHTML = descripcionMostrada;
                 leerMasLink.remove();
             });
