@@ -1,5 +1,4 @@
 import {
-    apiKeyRawg,
     baseUrl,
     pageSize,
     genresES,
