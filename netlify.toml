@@ -3,7 +3,7 @@
   functions = "netlify/functions"
 
 [[redirects]]
-  from = "/api/*"
+  from = "/.netlify/functions/*"
   to = "/.netlify/functions/:splat"
   status = 200
 
@@ -12,12 +12,25 @@
   to = "/index.html"
   status = 200
   force = true
-  conditions = {Response.missing = ["/pc.html", "/playstation.html", "/xbox.html", "/nintendo.html", "/movil.html", "/otras.html", "/index.css", "/*.js"]}
+  conditions = {Response.missing = true}
+
+[[headers]]
+  for = "/*.js"
+    [headers.values]
+    Content-Type = "application/javascript"
+    Cache-Control = "no-cache"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.css"
+    [headers.values]
+    Content-Type = "text/css"
+    Cache-Control = "no-cache"
+    Access-Control-Allow-Origin = "*"
 
 [[headers]]
   for = "/*"
     [headers.values]
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type"
-    Cache-Control = "public, max-age=0, must-revalidate" 
+    Access-Control-Allow-Headers = "Content-Type" 
