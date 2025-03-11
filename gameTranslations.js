@@ -9973,7 +9973,7 @@ const gameTranslations = {
         'however': 'sin embargo',
         'whatever': 'lo que sea',
 // Diccionario técnico completo de traducciones para videojuegos
-const gameTranslations = {
+
     // Términos generales de juegos
     'game': 'juego',
     'series': 'serie',
