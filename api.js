@@ -142,9 +142,36 @@ async function getGameDetails(gameId) {
     }
 }
 
+async function getGenres() {
+    try {
+        console.log('Iniciando llamada a getGenres...');
+        const response = await fetch('/.netlify/functions/getGenres', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        console.log('Respuesta de getGenres:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error en getGenres:', errorText);
+            throw new Error(`Error en la solicitud de géneros: ${response.status} - ${errorText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Datos de géneros recibidos:', data);
+        return data.results || [];
+    } catch (error) {
+        console.error('Error en getGenres:', error);
+        throw error;
+    }
+}
+
 async function getGames(platformIds, genreId, page = 1) {
     try {
-        console.log('Solicitando juegos:', { platformIds, genreId, page });
+        console.log('Iniciando llamada a getGames con:', { platformIds, genreId, page });
         const response = await fetch('/.netlify/functions/getGames', {
             method: 'POST',
             headers: {
@@ -153,39 +180,20 @@ async function getGames(platformIds, genreId, page = 1) {
             body: JSON.stringify({ platformIds, genreId, page })
         });
         
+        console.log('Respuesta de getGames:', response.status, response.statusText);
+        
         if (!response.ok) {
-            throw new Error(`Error en la solicitud: ${response.status}`);
+            const errorText = await response.text();
+            console.error('Error en getGames:', errorText);
+            throw new Error(`Error en la solicitud: ${response.status} - ${errorText}`);
         }
         
         const data = await response.json();
         console.log('Datos de juegos recibidos:', data);
         return data;
     } catch (error) {
-        console.error('Error al obtener juegos:', error);
-        return { results: [] };
-    }
-}
-
-async function getGenres() {
-    try {
-        console.log('Obteniendo géneros...');
-        const response = await fetch('/.netlify/functions/getGenres', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Error en la solicitud de géneros: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('Géneros recibidos:', data);
-        return data.results || [];
-    } catch (error) {
-        console.error('Error al obtener los géneros:', error);
-        return [];
+        console.error('Error en getGames:', error);
+        throw error;
     }
 }
 
